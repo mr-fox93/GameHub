@@ -7,7 +7,8 @@ import {
   Image,
   Text,
 } from "@chakra-ui/react";
-import { Game } from "../hooks/useGames";
+import PlatformIcons from "./PlatformIcons";
+import { Game } from "../entities/Games";
 
 interface GameCardProps {
   game: Game;
@@ -21,6 +22,7 @@ const GameCard = ({ game }: GameCardProps) => {
         height="179px"
         src={game.background_image}
         alt="game image"
+        loading="lazy"
       />
       <CardBody
         display="flex"
@@ -29,13 +31,13 @@ const GameCard = ({ game }: GameCardProps) => {
       >
         <Box>
           <Flex alignItems="center" mb="6px" gap="6px">
-            {/* <PlatformIcons
+            <PlatformIcons
               platforms={
                 game.parent_platforms
                   ?.filter((p) => !!p.platform)
                   .map((p) => p.platform) || []
               }
-            /> */}
+            />
             <Flex flexGrow={1}></Flex>
             {/* <MetaCritic score={game.metacritic} /> */}
           </Flex>
