@@ -1,10 +1,17 @@
 import { useInfiniteQuery } from "react-query";
 import APIClient from "../services/api-client";
 
-interface Game {
+export interface Game {
   id: number;
   name: string;
   released: string;
+  background_image: string;
+  rating: number;
+  parent_platforms: {
+    platform: {
+      name: string;
+    };
+  };
 }
 
 const apiClient = new APIClient<Game>("/games");
