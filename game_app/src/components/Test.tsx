@@ -2,8 +2,9 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import React from "react";
 import useGames from "../hooks/useGames";
 import GameCard from "./GameCard";
-import { Box, SimpleGrid } from "@chakra-ui/react";
+import { Box, SimpleGrid, useBreakpointValue } from "@chakra-ui/react";
 import { Spinner } from "@chakra-ui/react";
+import ScrollToTopButton from "../common/ScrottToTopButton";
 
 const Test = () => {
   const {
@@ -14,6 +15,14 @@ const Test = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useGames();
+
+  const isVisible = useBreakpointValue({
+    base: true,
+    sm: false,
+    md: false,
+    lg: false,
+    xl: false,
+  });
 
   if (error) return <div>Error..</div>;
 
@@ -52,6 +61,7 @@ const Test = () => {
           </SimpleGrid>
         </InfiniteScroll>
       )}
+      {isVisible && <ScrollToTopButton />}
     </>
   );
 };
