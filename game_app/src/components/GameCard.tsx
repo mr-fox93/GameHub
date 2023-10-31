@@ -22,7 +22,7 @@ const GameCard = ({ game }: GameCardProps) => {
         height="179px"
         src={game.background_image}
         alt="game image"
-        loading="lazy"
+        //loading="lazy"
       />
       <CardBody
         display="flex"

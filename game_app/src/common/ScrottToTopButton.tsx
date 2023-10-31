@@ -9,7 +9,7 @@ const ScrollToTopButton = () => {
   return (
     <IconButton
       aria-label="back to top"
-      icon={<ChevronUpIcon />}
+      icon={<ChevronUpIcon boxSize="30px" />}
       size="lg"
       borderRadius="full"
       onClick={scrollToTop}
@@ -17,7 +17,6 @@ const ScrollToTopButton = () => {
       bottom="6rem"
       right="2rem"
       zIndex="999"
-      colorScheme="blue"
     />
   );
 };
