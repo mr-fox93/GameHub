@@ -4,6 +4,7 @@ import App from "./App.tsx";
 import "./index.css";
 import theme from "./theme";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { GlobalContextProvider } from "./context/GlobalContext";
 
@@ -16,6 +17,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <QueryClientProvider client={queryClient}>
         <GlobalContextProvider>
           <App />
+          <ReactQueryDevtools initialIsOpen={false} />
         </GlobalContextProvider>
       </QueryClientProvider>
     </ChakraProvider>

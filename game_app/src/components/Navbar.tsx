@@ -6,7 +6,7 @@ import InputSearch from "./InputSearch";
 const Navbar = () => {
   return (
     <HStack justifyContent="space-between" padding="12px">
-      <Image boxSize="60px" src={logo} />
+      <Image boxSize="57px" src={logo} />
       <InputSearch />
       <Swich />
     </HStack>
