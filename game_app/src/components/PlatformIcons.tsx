@@ -4,12 +4,7 @@ import { AiFillWindows, AiFillApple, AiFillAndroid } from "react-icons/ai";
 import { SiNintendogamecube, SiSega, SiAtari } from "react-icons/si";
 import { DiLinux } from "react-icons/di";
 import { FaFirefoxBrowser } from "react-icons/fa";
-
-interface Platform {
-  id: number;
-  name: string;
-  slug: string;
-}
+import { Platform } from "../entities/Platform";
 
 interface Props {
   platforms: Platform[];
