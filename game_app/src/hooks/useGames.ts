@@ -3,6 +3,7 @@ import APIClient from "../services/api-client";
 import { Game } from "../entities/Games";
 import { useContext } from "react";
 import { GlobalContext } from "../context/GlobalContext";
+import ms from "ms";
 
 const apiClient = new APIClient<Game>("/games");
 
@@ -28,6 +29,7 @@ const useGames = () => {
           genres: genre,
         },
       }),
+    staleTime: ms("24h"),
     getNextPageParam: (lastPage, allPages) => {
       return lastPage.next ? allPages.length + 1 : undefined;
     },
