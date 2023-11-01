@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import SortSelector from "./components/SortSelector";
 import PlatformSelectors from "./components/PlatformsSelector";
 import RelesedDateSelector from "./components/RelesedDateSelector";
+import GenreList from "./components/GenreList";
 
 function App() {
   return (
@@ -19,8 +20,9 @@ function App() {
       </GridItem>
       <Show above="lg">
         <GridItem area="aside" width="220px" ml="5px">
-          {/* <GenreList setSelectedGenre={setSelectedGenre} setGames={setGames} /> */}
           <RelesedDateSelector />
+          <GenreList />
+
           <BackToTop />
         </GridItem>
       </Show>

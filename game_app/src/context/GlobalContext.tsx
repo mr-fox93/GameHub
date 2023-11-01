@@ -9,6 +9,8 @@ interface GlobalProps {
   setSort: React.Dispatch<React.SetStateAction<string>>;
   dateRelesed: string;
   setDateRelesed: React.Dispatch<React.SetStateAction<string>>;
+  genre: string | null;
+  setGenre: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export const GlobalContext = createContext<GlobalProps | undefined>(undefined);
@@ -20,6 +22,7 @@ export const GlobalContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [platform, setPlatform] = useState<number | null>(null);
   const [sort, setSort] = useState<string>("");
   const [dateRelesed, setDateRelesed] = useState<string>("");
+  const [genre, setGenre] = useState<string | null>(null);
 
   return (
     <GlobalContext.Provider
@@ -32,6 +35,8 @@ export const GlobalContextProvider: React.FC<{ children: React.ReactNode }> = ({
         setSort,
         dateRelesed,
         setDateRelesed,
+        genre,
+        setGenre,
       }}
     >
       {children}

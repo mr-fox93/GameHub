@@ -27,7 +27,7 @@ const RelesedDateSelector = () => {
     throw new Error("Error");
   }
 
-  const { setDateRelesed } = context;
+  const { setDateRelesed, setGenre } = context;
 
   useEffect(() => {
     let dateFilter;
@@ -100,12 +100,12 @@ const RelesedDateSelector = () => {
         fontWeight="extrabold"
         justifyContent="flex-start"
         onClick={() => {
-          setDate(""), setName("");
+          setDate(""), setName(""), setGenre(null);
         }}
       >
         Home
       </Button>
-      <Flex flexDirection="column" padding={3}>
+      <Flex flexDirection="column" padding={3} justifyContent="flex-start">
         <Text fontSize="25px" fontWeight="extrabold" mb="7px">
           New Releases
         </Text>
@@ -119,13 +119,13 @@ const RelesedDateSelector = () => {
                     setDate(item.value);
                     setName(item.value);
                   }}
-                  variant="link"
+                  variant={item.value === name ? "outline" : "link"}
                   ml="5px"
                   background="transparent"
                   transition="transform 0.3s"
                   _hover={{ transform: "scale(1.1)" }}
-                  fontWeight={item.value === name ? "extrabold" : "normal"}
-                  fontSize="15px"
+                  fontWeight={item.value === name ? "extrabold" : "bold"}
+                  fontSize={item.value === name ? "17px" : "15px"}
                   textDecoration="none"
                   gap="5px"
                   padding="10px"
