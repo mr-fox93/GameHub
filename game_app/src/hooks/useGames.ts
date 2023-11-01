@@ -13,16 +13,18 @@ const useGames = () => {
     throw new Error("Error");
   }
 
-  const { searchInput, platform } = context;
+  const { searchInput, platform, sort } = context;
 
   return useInfiniteQuery({
-    queryKey: ["games", searchInput, platform],
+    queryKey: ["games", searchInput, platform, sort],
     queryFn: ({ pageParam = 1 }) =>
       apiClient.getAll({
         params: {
           page: pageParam,
           search: searchInput,
           parent_platforms: platform,
+          ordering: sort,
+          dates: "2023-10-06,2023-11-05",
         },
       }),
     getNextPageParam: (lastPage, allPages) => {

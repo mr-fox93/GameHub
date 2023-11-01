@@ -5,7 +5,6 @@ import GameCard from "./GameCard";
 import { Box, SimpleGrid, useBreakpointValue } from "@chakra-ui/react";
 import { Spinner } from "@chakra-ui/react";
 import ScrollToTopButton from "../common/ScrottToTopButton";
-import PlatformSelectors from "./PlatformsSelector";
 
 const Test = () => {
   const {
@@ -29,7 +28,6 @@ const Test = () => {
 
   return (
     <>
-      <PlatformSelectors />
       {isLoading ? (
         <Box
           display="flex"

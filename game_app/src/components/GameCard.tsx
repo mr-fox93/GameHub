@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import PlatformIcons from "./PlatformIcons";
 import { Game } from "../entities/Games";
+import MetaCritic from "./MetaCritic";
 
 interface GameCardProps {
   game: Game;
@@ -22,7 +23,6 @@ const GameCard = ({ game }: GameCardProps) => {
         height="179px"
         src={game.background_image}
         alt="game image"
-        //loading="lazy"
       />
       <CardBody
         display="flex"
@@ -39,7 +39,7 @@ const GameCard = ({ game }: GameCardProps) => {
               }
             />
             <Flex flexGrow={1}></Flex>
-            {/* <MetaCritic score={game.metacritic} /> */}
+            <MetaCritic score={game.metacritic} />
           </Flex>
 
           <Heading fontSize="2xl">
@@ -57,7 +57,7 @@ const GameCard = ({ game }: GameCardProps) => {
 
         <Box mt="auto">
           {" "}
-          <Text textDecoration="underline" fontSize="sm" color="gray.500">
+          <Text textDecoration="none" fontSize="sm" color="gray.500">
             Relesed date: {game.released}
           </Text>
         </Box>
