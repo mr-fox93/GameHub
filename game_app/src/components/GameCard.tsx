@@ -10,6 +10,7 @@ import {
 import PlatformIcons from "./PlatformIcons";
 import { Game } from "../entities/Games";
 import MetaCritic from "./MetaCritic";
+import noimage from "../assets/noimage.png";
 
 interface GameCardProps {
   game: Game;
@@ -21,7 +22,7 @@ const GameCard = ({ game }: GameCardProps) => {
       <Image
         width="100%"
         height="179px"
-        src={game.background_image}
+        src={game.background_image ? game.background_image : noimage}
         alt="game image"
       />
       <CardBody

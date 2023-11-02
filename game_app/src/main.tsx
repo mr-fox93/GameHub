@@ -6,7 +6,6 @@ import theme from "./theme";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
-import { GlobalContextProvider } from "./context/GlobalContext";
 
 const queryClient = new QueryClient();
 
@@ -15,10 +14,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <ChakraProvider theme={theme}>
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <QueryClientProvider client={queryClient}>
-        <GlobalContextProvider>
-          <App />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </GlobalContextProvider>
+        <App />
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </ChakraProvider>
   </React.StrictMode>

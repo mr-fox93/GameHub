@@ -6,7 +6,7 @@ import { Box, SimpleGrid, useBreakpointValue } from "@chakra-ui/react";
 import { Spinner } from "@chakra-ui/react";
 import ScrollToTopButton from "../common/ScrottToTopButton";
 
-const Test = () => {
+const GameGrid = () => {
   const {
     data,
     isLoading,
@@ -44,7 +44,6 @@ const Test = () => {
           next={fetchNextPage}
           hasMore={!!hasNextPage}
           loader={isFetchingNextPage && <Spinner />}
-          //scrollThreshold={0.8}
         >
           <SimpleGrid
             mt="20px"
@@ -66,4 +65,4 @@ const Test = () => {
   );
 };
 
-export default Test;
+export default GameGrid;
