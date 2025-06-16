@@ -1,5 +1,5 @@
 import InfiniteScroll from "react-infinite-scroll-component";
-import React from "react";
+import { Fragment } from "react";
 import useGames from "../hooks/useGames";
 import GameCard from "./GameCard";
 import { Box, SimpleGrid, useBreakpointValue } from "@chakra-ui/react";
@@ -13,7 +13,6 @@ const GameGrid = () => {
     error,
     fetchNextPage,
     hasNextPage,
-    isFetchingNextPage,
   } = useGames();
 
   const isVisible = useBreakpointValue({
@@ -24,7 +23,25 @@ const GameGrid = () => {
     xl: false,
   });
 
-  if (error) return <div>Error..</div>;
+  if (error) {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        height="50vh"
+        textAlign="center"
+      >
+        <Box fontSize="xl" color="red.500" mb={4}>
+          ⚠️ Failed to load games
+        </Box>
+        <Box color="gray.500">
+          Please check your internet connection and try again
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <>
@@ -40,22 +57,22 @@ const GameGrid = () => {
         </Box>
       ) : (
         <InfiniteScroll
-          dataLength={data?.pages.length ?? 0}
+          dataLength={data?.pages.reduce((total, page) => total + (page.results?.length ?? 0), 0) ?? 0}
           next={fetchNextPage}
           hasMore={!!hasNextPage}
-          loader={isFetchingNextPage && <Spinner />}
+          loader={<Spinner />}
         >
           <SimpleGrid
             mt="20px"
             columns={{ sm: 1, md: 2, lg: 3, xl: 4 }}
             spacing={10}
           >
-            {data?.pages.map((page) => (
-              <React.Fragment key={crypto.randomUUID()}>
+            {data?.pages.map((page, pageIndex) => (
+              <Fragment key={pageIndex}>
                 {page.results?.map((game) => (
                   <GameCard key={game.id} game={game} />
                 ))}
-              </React.Fragment>
+              </Fragment>
             ))}
           </SimpleGrid>
         </InfiniteScroll>

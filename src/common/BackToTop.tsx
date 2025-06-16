@@ -35,7 +35,6 @@ const BackToTop: React.FC = () => {
       left="1rem"
       bottom="1rem"
     >
-      {" "}
       {isVisible && (
         <IconButton
           aria-label="back to top"

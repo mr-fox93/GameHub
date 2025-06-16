@@ -9,6 +9,7 @@ import {
   Flex,
   Image,
   Spinner,
+  Box,
 } from "@chakra-ui/react";
 import useGameQueryStore from "../store";
 
@@ -25,7 +26,18 @@ const GenreList = () => {
     }
   }, [genreId]);
 
-  if (error) return <div>Error..</div>;
+  if (error) {
+    return (
+      <Box p={3}>
+        <Text fontSize="xl" color="red.500" mb={2}>
+          ⚠️ Failed to load genres
+        </Text>
+        <Text color="gray.500" fontSize="sm">
+          Please try again later
+        </Text>
+      </Box>
+    );
+  }
   if (isLoading) return <Spinner />;
 
   return (
