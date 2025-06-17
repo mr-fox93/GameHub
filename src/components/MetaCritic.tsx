@@ -1,7 +1,7 @@
 import { Badge } from "@chakra-ui/react";
 
 interface Props {
-  score: number;
+  score?: number | null;
 }
 
 const getColor = (score: number) => {
@@ -11,6 +11,7 @@ const getColor = (score: number) => {
 };
 
 const MetaCritic = ({ score }: Props) => {
+  if (!score && score !== 0) return null;
   return (
     <Badge fontSize="15px" variant="outline" colorScheme={getColor(score)}>
       {score}

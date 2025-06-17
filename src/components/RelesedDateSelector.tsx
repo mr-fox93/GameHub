@@ -24,9 +24,9 @@ const RelesedDateSelector = () => {
   const setDateRelesed = useGameQueryStore((state) => state.setDateReleased);
   const setGenreId = useGameQueryStore((state) => state.setGenreId);
 
-  //const dateReleased = useGameQueryStore((state)=> state.gameQuery.dateReleased)
-
   useEffect(() => {
+    if (!date) return;
+
     let dateFilter;
 
     switch (date) {

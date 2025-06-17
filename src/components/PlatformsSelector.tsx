@@ -8,6 +8,7 @@ const PlatformSelectors = () => {
 
   const setPlatformId = useGameQueryStore((state) => state.setPlatformId);
   const platformId = useGameQueryStore((state) => state.gameQuery.platformId);
+  const selectedPlatformId = typeof platformId === "number" ? platformId : undefined;
 
   if (error) return <Text color="red.500">Failed to load platforms</Text>;
   if (isLoading) return <Spinner size="sm" />;
@@ -15,7 +16,7 @@ const PlatformSelectors = () => {
   return (
     <Menu>
       <MenuButton as={Button} rightIcon={<BsChevronDown />}>
-        {data?.results.find((item) => item.id === platformId)?.name ||
+        {data?.results.find((item) => item.id === selectedPlatformId)?.name ||
           "Platform"}
       </MenuButton>
 
