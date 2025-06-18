@@ -15,6 +15,7 @@ const SortSelector = () => {
   const setDateReleased = useGameQueryStore((state) => state.setDateReleased);
   const setPlatformId = useGameQueryStore((state) => state.setPlatformId);
   const sort = useGameQueryStore((state) => state.gameQuery.sortOrder);
+  const isSearchActive = useGameQueryStore((state) => state.isSearchActive);
 
   const getRecentToFutureDateRange = () => {
     const pastDate = new Date();
@@ -24,6 +25,8 @@ const SortSelector = () => {
   };
   
   const handleSortChange = (value: string) => {
+    if (isSearchActive) return;
+    
     setSort(value);
     
     if (value === "-added") {
@@ -40,23 +43,30 @@ const SortSelector = () => {
     }
   };
   
+  const displayLabel = isSearchActive 
+    ? "Relevance" 
+    : (arrayOfSelectors.find((item) => item.value === sort)?.label || "Latest & Most Trending");
+  
   return (
     <Menu>
-      <MenuButton as={Button} rightIcon={<BsChevronDown />}>
-        Sort by:{" "}
-        {arrayOfSelectors.find((item) => item.value === sort)?.label ||
-          "Latest & Most Trending"}
+      <MenuButton 
+        as={Button} 
+        rightIcon={<BsChevronDown />}
+        opacity={isSearchActive ? 0.5 : 1}
+        cursor={isSearchActive ? "not-allowed" : "pointer"}
+      >
+        Sort by: {displayLabel}
       </MenuButton>
 
       <MenuList>
-        {arrayOfSelectors?.map((item) => (
+        {arrayOfSelectors.map((selector) => (
           <MenuItem
-            onClick={() => {
-              handleSortChange(item.value);
-            }}
-            key={item.label}
+            onClick={() => handleSortChange(selector.value)}
+            key={selector.value}
+            disabled={isSearchActive}
+            opacity={isSearchActive ? 0.5 : 1}
           >
-            {item.label}
+            {selector.label}
           </MenuItem>
         ))}
       </MenuList>

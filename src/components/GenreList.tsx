@@ -19,6 +19,7 @@ const GenreList = () => {
 
   const setGenreId = useGameQueryStore((state) => state.setGenreId);
   const genreId = useGameQueryStore((state) => state.gameQuery.genreId);
+  const isSearchActive = useGameQueryStore((state) => state.isSearchActive);
 
   const titleColor = useColorModeValue("gray.800", "white");
   const genreNameColor = useColorModeValue("gray.800", "white");
@@ -27,12 +28,19 @@ const GenreList = () => {
   const borderColor = useColorModeValue("blue.500", "blue.400");
 
   useEffect(() => {
-    if (!genreId) {
+    if (!genreId || isSearchActive) {
       setSelectedGenre("");
+    } else {
+      const foundGenre = data?.results.find(item => item.slug === genreId);
+      if (foundGenre) {
+        setSelectedGenre(foundGenre.name);
+      }
     }
-  }, [genreId]);
+  }, [genreId, isSearchActive, data]);
 
   const handleGenreSelection = (genreName: string, genreSlug: string) => {
+    if (isSearchActive) return;
+    
     if (selectedGenre === genreName) {
       setSelectedGenre("");
       setGenreId(null);
@@ -74,17 +82,18 @@ const GenreList = () => {
               <ListItem key={item.id}>
                 <Box
                   onClick={() => handleGenreSelection(item.name, item.slug)}
-                  cursor="pointer"
+                  cursor={isSearchActive ? "not-allowed" : "pointer"}
                   p={2}
                   borderRadius="6px"
                   transition="all 0.2s ease"
-                  bg={selectedGenre === item.name ? selectedBg : "transparent"}
+                  bg={selectedGenre === item.name && !isSearchActive ? selectedBg : "transparent"}
                   _hover={{
-                    bg: hoverBg,
-                    transform: "translateX(2px)"
+                    bg: isSearchActive ? "transparent" : hoverBg,
+                    transform: isSearchActive ? "none" : "translateX(2px)"
                   }}
-                  border={selectedGenre === item.name ? "1px solid" : "1px solid transparent"}
-                  borderColor={selectedGenre === item.name ? borderColor : "transparent"}
+                  border={selectedGenre === item.name && !isSearchActive ? "1px solid" : "1px solid transparent"}
+                  borderColor={selectedGenre === item.name && !isSearchActive ? borderColor : "transparent"}
+                  opacity={isSearchActive ? 0.5 : 1}
                 >
                   <HStack spacing={3} align="center" h="40px">
                     <Image

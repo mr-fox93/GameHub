@@ -10,9 +10,10 @@ const screenshotsClient = new APIClient<{ id: number; image: string }>("");
 
 const useGames = () => {
   const gameQuery = useGameQueryStore((s) => s.gameQuery);
+  const isSearchActive = useGameQueryStore((s) => s.isSearchActive);
 
   return useInfiniteQuery({
-    queryKey: ["games", gameQuery],
+    queryKey: ["games", gameQuery, isSearchActive],
     queryFn: ({ pageParam = 1 }) => {
       const params: Record<string, string | number> = {
         page: pageParam,

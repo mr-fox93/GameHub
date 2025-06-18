@@ -8,24 +8,46 @@ const PlatformSelectors = () => {
 
   const setPlatformId = useGameQueryStore((state) => state.setPlatformId);
   const platformId = useGameQueryStore((state) => state.gameQuery.platformId);
+  const isSearchActive = useGameQueryStore((state) => state.isSearchActive);
   const selectedPlatformId = typeof platformId === "number" ? platformId : undefined;
+
+  const handlePlatformChange = (id: number | null) => {
+    if (isSearchActive) return;
+    setPlatformId(id);
+  };
 
   if (error) return <Text color="red.500">Failed to load platforms</Text>;
   if (isLoading) return <Spinner size="sm" />;
 
+  const displayPlatform = isSearchActive 
+    ? "All Platforms"
+    : (data?.results.find((item) => item.id === selectedPlatformId)?.name || "Platform");
+
   return (
     <Menu>
-      <MenuButton as={Button} rightIcon={<BsChevronDown />}>
-        {data?.results.find((item) => item.id === selectedPlatformId)?.name ||
-          "Platform"}
+      <MenuButton 
+        as={Button} 
+        rightIcon={<BsChevronDown />}
+        opacity={isSearchActive ? 0.5 : 1}
+        cursor={isSearchActive ? "not-allowed" : "pointer"}
+      >
+        {displayPlatform}
       </MenuButton>
 
       <MenuList>
-        <MenuItem onClick={() => setPlatformId(null)}>All Platforms</MenuItem>
+        <MenuItem 
+          onClick={() => handlePlatformChange(null)}
+          disabled={isSearchActive}
+          opacity={isSearchActive ? 0.5 : 1}
+        >
+          All Platforms
+        </MenuItem>
         {data?.results.map((platform) => (
           <MenuItem
-            onClick={() => setPlatformId(platform.id)}
+            onClick={() => handlePlatformChange(platform.id)}
             key={platform.id}
+            disabled={isSearchActive}
+            opacity={isSearchActive ? 0.5 : 1}
           >
             {platform.name}
           </MenuItem>
