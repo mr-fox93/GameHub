@@ -16,7 +16,7 @@ const ScrollToTopButton = () => {
       position="fixed"
       bottom="6rem"
       right="2rem"
-      zIndex="999"
+      zIndex={999}
     />
   );
 };

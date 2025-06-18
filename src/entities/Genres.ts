@@ -3,4 +3,5 @@ export interface Genres {
   name: string;
   image_background: string;
   slug: string;
+  games_count: number;
 }

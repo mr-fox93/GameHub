@@ -5,8 +5,18 @@ export interface Game {
   name: string;
   released: string;
   background_image: string;
-  metacritic: number;
+  rating: number;
+  ratings_count: number;
+  added: number;
+  reactions?: Record<string, number>;
+  background_image_additional?: string;
+  screenshots_count: number;
+  screenshots?: {
+    id: number;
+    image: string;
+  }[];
   parent_platforms: {
     platform: Platform;
   }[];
+  rating_top: number;
 }

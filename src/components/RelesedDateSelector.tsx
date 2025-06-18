@@ -1,13 +1,25 @@
-import { List, ListItem, Button, HStack, Text, Flex } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { IoCalendarNumberSharp } from "react-icons/io5";
-import { BiSolidHot } from "react-icons/bi";
+import { useState, useEffect } from "react";
+import {
+  Flex,
+  Text,
+  Box,
+  Icon,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { BsRewindFill, BsFillFastForwardFill } from "react-icons/bs";
-import useGameQueryStore from "../store"; // Import the store
+import { BiSolidHot } from "react-icons/bi";
+import { IoCalendarNumberSharp } from "react-icons/io5";
+import useGameQueryStore from "../store";
+
+const getRecentToFutureDateRange = () => {
+  const pastDate = new Date();
+  pastDate.setFullYear(pastDate.getFullYear() - 1);
+  const futureDate = "2030-12-31";
+  return `${pastDate.toISOString().split("T")[0]},${futureDate}`;
+};
 
 const RelesedDateSelector = () => {
   const [date, setDate] = useState<string>("");
-
   const [name, setName] = useState<string>("");
 
   const dateSelectors = [
@@ -22,11 +34,53 @@ const RelesedDateSelector = () => {
   ];
 
   const setDateRelesed = useGameQueryStore((state) => state.setDateReleased);
-  const setGenreId = useGameQueryStore((state) => state.setGenreId);
+  const genreId = useGameQueryStore((state) => state.gameQuery.genreId);
+  const dateReleased = useGameQueryStore((state) => state.gameQuery.dateReleased);
+  const isSearchActive = useGameQueryStore((state) => state.isSearchActive);
 
-  //const dateReleased = useGameQueryStore((state)=> state.gameQuery.dateReleased)
+  const titleColor = useColorModeValue("gray.800", "white");
+  const selectorBg = useColorModeValue("white", "gray.800");
+  const selectorHoverBg = useColorModeValue("gray.50", "gray.700");
+  const selectorSelectedBg = useColorModeValue("blue.50", "blue.900");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const iconColor = useColorModeValue("blue.500", "blue.300");
+  const selectedBorderColor = useColorModeValue("blue.500", "blue.300");
 
   useEffect(() => {
+    if (isSearchActive) {
+      setDate("");
+      setName("");
+    }
+  }, [isSearchActive]);
+
+  useEffect(() => {
+    const defaultDateRange = getRecentToFutureDateRange();
+    if (dateReleased === defaultDateRange || !dateReleased) {
+      setDate("");
+      setName("");
+    }
+  }, [dateReleased]);
+
+  const handleDateSelection = (selectedValue: string) => {
+    if (isSearchActive) return;
+    
+    if (name === selectedValue) {
+      setDate("");
+      setName("");
+      if (genreId) {
+        setDateRelesed(getRecentToFutureDateRange());
+      } else {
+        setDateRelesed(getRecentToFutureDateRange());
+      }
+    } else {
+      setDate(selectedValue);
+      setName(selectedValue);
+    }
+  };
+
+  useEffect(() => {
+    if (!date) return;
+
     let dateFilter;
 
     switch (date) {
@@ -90,51 +144,47 @@ const RelesedDateSelector = () => {
   }, [date, setDateRelesed]);
 
   return (
-    <>
-      <Button
-        variant="ghost"
-        fontSize="25px"
-        fontWeight="extrabold"
-        justifyContent="flex-start"
-        onClick={() => {
-          setDate(""), setName(""), setDateRelesed(""), setGenreId(null);
-        }}
-      >
-        Home
-      </Button>
-      <Flex flexDirection="column" padding={3} justifyContent="flex-start">
-        <Text fontSize="25px" fontWeight="extrabold" mb="7px">
-          New Releases
-        </Text>
-        <List>
-          {dateSelectors.map((item) => (
-            <ListItem key={item.value}>
-              <HStack>
-                <item.icon size={30} />
-                <Button
-                  onClick={() => {
-                    setDate(item.value);
-                    setName(item.value);
-                  }}
-                  variant={item.value === name ? "outline" : "link"}
-                  ml="5px"
-                  background="transparent"
-                  transition="transform 0.3s"
-                  _hover={{ transform: "scale(1.1)" }}
-                  fontWeight={item.value === name ? "extrabold" : "bold"}
-                  fontSize={item.value === name ? "17px" : "15px"}
-                  textDecoration="none"
-                  gap="5px"
-                  padding="10px"
-                >
-                  {item.label}
-                </Button>
-              </HStack>
-            </ListItem>
-          ))}
-        </List>
+    <Flex flexDirection="column" padding={3} gap={2}>
+      <Text fontSize="25px" fontWeight="extrabold" color={titleColor}>
+        New Release
+      </Text>
+      <Flex direction="column" gap={2}>
+        {dateSelectors.map((selector) => (
+          <Box
+            key={selector.value}
+            onClick={() => handleDateSelection(selector.value)}
+            cursor={isSearchActive ? "not-allowed" : "pointer"}
+            p={3}
+            bg={name === selector.value && !isSearchActive ? selectorSelectedBg : selectorBg}
+            borderRadius="8px"
+            border="1px solid"
+            borderColor={name === selector.value && !isSearchActive ? selectedBorderColor : borderColor}
+            transition="all 0.2s ease"
+            opacity={isSearchActive ? 0.5 : 1}
+            _hover={{
+              bg: isSearchActive ? selectorBg : (name === selector.value ? selectorSelectedBg : selectorHoverBg),
+              transform: isSearchActive ? "none" : "translateY(-1px)",
+              boxShadow: isSearchActive ? "none" : "0 2px 8px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Flex align="center" gap={3}>
+              <Icon
+                as={selector.icon}
+                boxSize={5}
+                color={name === selector.value && !isSearchActive ? selectedBorderColor : iconColor}
+              />
+              <Text
+                fontSize="md"
+                fontWeight={name === selector.value && !isSearchActive ? "bold" : "medium"}
+                color={titleColor}
+              >
+                {selector.label}
+              </Text>
+            </Flex>
+          </Box>
+        ))}
       </Flex>
-    </>
+    </Flex>
   );
 };
 

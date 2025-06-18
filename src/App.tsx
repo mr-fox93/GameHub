@@ -1,4 +1,4 @@
-import { Flex, Grid, GridItem, HStack, Hide, Show } from "@chakra-ui/react";
+import { Flex, Grid, GridItem, HStack, Hide, Show, Box } from "@chakra-ui/react";
 import GameGrid from "./components/GameGrid";
 import BackToTop from "./common/BackToTop";
 import Navbar from "./components/Navbar";
@@ -15,28 +15,74 @@ function App() {
         base: `'nav' ' main' 'footer'  `,
         lg: `'nav nav' ' aside main'`,
       }}
+      templateRows={{
+        base: "auto 1fr auto",
+        lg: "auto 1fr"
+      }}
+      h="100vh"
     >
       <GridItem area="nav">
         <Navbar />
       </GridItem>
       <Show above="lg">
-        <GridItem area="aside" width="220px" ml="5px">
-          <RelesedDateSelector />
-          <GenreList />
-
-          <BackToTop />
+        <GridItem 
+          area="aside" 
+          width="220px" 
+          ml="5px"
+          position="relative"
+          overflow="hidden"
+        >
+          <Box
+            h="100%"
+            overflowY="auto"
+            css={{
+              '&::-webkit-scrollbar': {
+                width: '6px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: 'transparent',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '3px',
+              },
+              '&::-webkit-scrollbar-thumb:hover': {
+                background: 'rgba(255, 255, 255, 0.3)',
+              },
+            }}
+          >
+            <RelesedDateSelector />
+            <GenreList />
+            <BackToTop />
+          </Box>
         </GridItem>
       </Show>
 
-      <GridItem area="main" padding="3">
-        <HStack spacing={5}>
-          <Flex gap="15px" flexDirection={{ base: "column", lg: "row" }}>
-            <PlatformSelectors />
-            <SortSelector />
-          </Flex>
-        </HStack>
-        <GameGrid />
+      <GridItem 
+        area="main" 
+        overflow="hidden"
+        display="flex"
+        flexDirection="column"
+      >
+        <Box p="3" flexShrink={0}>
+          <HStack spacing={5}>
+            <Flex gap="15px" flexDirection={{ base: "column", lg: "row" }}>
+              <PlatformSelectors />
+              <SortSelector />
+            </Flex>
+          </HStack>
+        </Box>
+        
+        <Box 
+          flex="1" 
+          overflow="hidden"
+          px="3"
+          pb="3"
+        >
+          <GameGrid />
+        </Box>
       </GridItem>
+      
       <GridItem area="footer" position="sticky" bottom="0" zIndex="sticky">
         <Hide above="md">
           <Footer />

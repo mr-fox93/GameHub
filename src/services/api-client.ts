@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig, AxiosError } from "axios";
 
 export interface FetchResponse<T> {
   count: number;
@@ -7,11 +7,28 @@ export interface FetchResponse<T> {
 }
 
 const axiosInstance = axios.create({
-  baseURL: "https://api.rawg.io/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://api.rawg.io/api",
+  timeout: 10000,
   params: {
-    key: "18c33c98ddfc4510a06d0fe243909c3a",
+    key: import.meta.env.VITE_RAWG_API_KEY,
   },
 });
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.code === 'ECONNABORTED') {
+      console.error('Request timeout');
+    } else if (error.response?.status === 429) {
+      console.error('Rate limit exceeded');
+    } else if (error.response?.status && error.response.status >= 500) {
+      console.error('Server error');
+    } else if (!error.response) {
+      console.error('Network error');
+    }
+    return Promise.reject(error);
+  }
+);
 
 class APIClient<T> {
   endpoint: string;
@@ -20,17 +37,15 @@ class APIClient<T> {
     this.endpoint = endpoint;
   }
 
-  getAll = (config: AxiosRequestConfig) => {
+  getAll = (config: AxiosRequestConfig & { url?: string } = {}) => {
+    const { url, ...axiosConfig } = config;
+    const endpoint = url || this.endpoint;
     return axiosInstance
-      .get<FetchResponse<T>>(this.endpoint, config)
+      .get<FetchResponse<T>>(endpoint, axiosConfig)
       .then((res) => res.data);
   };
 
-  //   get = (id: number | string) => {
-  //     return axiosInstance
-  //       .get<T>(this.endpoint + "/" + id)
-  //       .then((res) => res.data);
-  //   };
+
 }
 
 export default APIClient;

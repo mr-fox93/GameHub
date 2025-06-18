@@ -10,7 +10,7 @@ const Swich = () => {
       ) : (
         <SunIcon boxSize={5} />
       )}
-      <Switch isChecked={colorMode === "light"} onChange={toggleColorMode} />
+      <Switch isChecked={colorMode === "dark"} onChange={toggleColorMode} />
     </HStack>
   );
 };
