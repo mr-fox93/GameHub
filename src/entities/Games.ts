@@ -11,10 +11,10 @@ export interface Game {
   reactions?: Record<string, number>;
   background_image_additional?: string;
   screenshots_count: number;
-  screenshots?: Array<{
+  screenshots?: {
     id: number;
     image: string;
-  }>;
+  }[];
   parent_platforms: {
     platform: Platform;
   }[];

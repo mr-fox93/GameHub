@@ -27,7 +27,7 @@ const GameImageCarousel = ({ images, currentIndex, setCurrentIndex, isHovered, o
       <Image
         width="100%"
         height="100%"
-        src={images[currentIndex]}
+        src={images[currentIndex] || ""}
         alt="game image"
         objectFit="cover"
         transition="all 0.4s ease"

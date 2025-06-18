@@ -38,7 +38,7 @@ const useGames = () => {
 
       return apiClient.getAll({ params });
     },
-    staleTime: ms("24h"),
+    staleTime: ms("1h"),
     getNextPageParam: (lastPage, allPages) => {
       return lastPage.next ? allPages.length + 1 : undefined;
     },

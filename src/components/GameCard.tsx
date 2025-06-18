@@ -109,7 +109,7 @@ const GameCard = ({ game }: GameCardProps) => {
           <Image
             width="100%"
             height="100%"
-            src={allImages[currentImageIndex]}
+            src={allImages[currentImageIndex] || noimage}
             alt="game image"
             objectFit="cover"
             transition="all 0.4s ease"
@@ -315,7 +315,7 @@ const GameCard = ({ game }: GameCardProps) => {
           
           <Box position="relative" w="100%" h="100%">
             <Image
-              src={allImages[currentImageIndex]}
+              src={allImages[currentImageIndex] || noimage}
               alt="game image zoomed"
               objectFit="contain"
               w="100%"

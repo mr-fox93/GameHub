@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig, AxiosError } from "axios";
 
 export interface FetchResponse<T> {
   count: number;
@@ -7,11 +7,28 @@ export interface FetchResponse<T> {
 }
 
 const axiosInstance = axios.create({
-  baseURL: "https://api.rawg.io/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://api.rawg.io/api",
+  timeout: 10000,
   params: {
     key: import.meta.env.VITE_RAWG_API_KEY,
   },
 });
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.code === 'ECONNABORTED') {
+      console.error('Request timeout');
+    } else if (error.response?.status === 429) {
+      console.error('Rate limit exceeded');
+    } else if (error.response?.status && error.response.status >= 500) {
+      console.error('Server error');
+    } else if (!error.response) {
+      console.error('Network error');
+    }
+    return Promise.reject(error);
+  }
+);
 
 class APIClient<T> {
   endpoint: string;
