@@ -14,7 +14,11 @@
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "type-check": "tsc --noEmit",
     "preview": "vite preview",
-    "clean": "rm -rf dist node_modules/.vite"
+    "clean": "rm -rf dist node_modules/.vite",
+    "test": "vitest --config vitest.config.ts",
+    "test:ui": "vitest --ui --config vitest.config.ts",
+    "test:run": "vitest run --config vitest.config.ts",
+    "test:coverage": "vitest run --coverage --config vitest.config.ts"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
@@ -44,6 +48,14 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@vitest/ui": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "jsdom": "^23.0.0",
+    "vitest": "^1.0.0",
+    "msw": "^2.0.0"
   }
 }
