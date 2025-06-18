@@ -1,8 +1,11 @@
 import { create } from "zustand";
 
-// Helper to generate today date in YYYY-MM-DD format and a range that ends today.
-const today = new Date().toISOString().split("T")[0];
-const DATE_RANGE_UNTIL_TODAY = `1900-01-01,${today}`;
+const getRecentToFutureDateRange = () => {
+  const pastDate = new Date();
+  pastDate.setFullYear(pastDate.getFullYear() - 1);
+  const futureDate = "2030-12-31";
+  return `${pastDate.toISOString().split("T")[0]},${futureDate}`;
+};
 
 interface GameQuery {
   searchText?: string | null;
@@ -19,14 +22,15 @@ interface GameQueryStore {
   setSortOrder: (sortOrder: string) => void;
   setDateReleased: (dateReleased: string) => void;
   setGenreId: (genreId: string | null) => void;
+  resetToDefault: () => void;
 }
 
 export const useGameQueryStore = create<GameQueryStore>((set) => ({
   gameQuery: {
     searchText: null,
     platformId: "2,3,7",
-    sortOrder: "-released",
-    dateReleased: DATE_RANGE_UNTIL_TODAY,
+    sortOrder: "-added",
+    dateReleased: getRecentToFutureDateRange(),
     genreId: null,
   },
   setSearchText: (searchText) =>
@@ -39,6 +43,16 @@ export const useGameQueryStore = create<GameQueryStore>((set) => ({
     set((store) => ({ gameQuery: { ...store.gameQuery, dateReleased } })),
   setGenreId: (genreId) =>
     set((store) => ({ gameQuery: { ...store.gameQuery, genreId } })),
+  resetToDefault: () =>
+    set(() => ({
+      gameQuery: {
+        searchText: null,
+        platformId: "2,3,7",
+        sortOrder: "-added",
+        dateReleased: getRecentToFutureDateRange(),
+        genreId: null,
+      },
+    })),
 }));
 
 export default useGameQueryStore;

@@ -1,7 +1,7 @@
 import { InputGroup, InputLeftElement } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 import { Input as ChakraInput } from "@chakra-ui/react";
-import useGameQueryStore from "../store"; // Import the store
+import useGameQueryStore from "../store";
 
 const InputSearch = () => {
   const setSearchText = useGameQueryStore((state) => state.setSearchText);

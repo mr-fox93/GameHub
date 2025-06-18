@@ -13,10 +13,11 @@ import {
   ModalContent,
   ModalCloseButton,
   useDisclosure,
+  VStack,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import PlatformIcons from "./PlatformIcons";
 import { Game } from "../entities/Games";
-import MetaCritic from "./MetaCritic";
 import noimage from "../assets/noimage.png";
 import { AiFillStar } from "react-icons/ai";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
@@ -36,10 +37,17 @@ const formatCount = (num: number) => {
 const GameCard = ({ game }: GameCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isAdultContentRevealed, setIsAdultContentRevealed] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const gameTitleColor = useColorModeValue("gray.800", "white");
+  const ratingTextColor = useColorModeValue("gray.600", "gray.400");
+  const releaseDateColor = useColorModeValue("gray.500", "gray.500");
 
   const shouldLoadScreens = isHovered || isOpen;
   const { data: screenshots, isLoading } = useGameScreenshots(shouldLoadScreens ? game.id : 0);
+
+  const hasAdultContent = game.name.toLowerCase().includes('sex');
 
   const allImages = [
     game.background_image || noimage,
@@ -57,7 +65,6 @@ const GameCard = ({ game }: GameCardProps) => {
     setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
   };
 
-  // Ensure index is valid when image list shrinks (e.g., after closing modal)
   useEffect(() => {
     if (currentImageIndex >= allImages.length) {
       setCurrentImageIndex(0);
@@ -66,7 +73,15 @@ const GameCard = ({ game }: GameCardProps) => {
 
   const handleImageClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (hasAdultContent && !isAdultContentRevealed) {
+      return;
+    }
     onOpen();
+  };
+
+  const handleAdultContentReveal = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsAdultContentRevealed(true);
   };
 
   return (
@@ -99,10 +114,62 @@ const GameCard = ({ game }: GameCardProps) => {
             objectFit="cover"
             transition="all 0.4s ease"
             onClick={handleImageClick}
-            cursor="zoom-in"
+            cursor={hasAdultContent && !isAdultContentRevealed ? "pointer" : "zoom-in"}
+            filter={hasAdultContent && !isAdultContentRevealed ? "blur(20px)" : "none"}
           />
           
-          {isHovered && (
+          {hasAdultContent && !isAdultContentRevealed && (
+            <Box
+              position="absolute"
+              top={0}
+              left={0}
+              right={0}
+              bottom={0}
+              bg="blackAlpha.800"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              backdropFilter="blur(10px)"
+              onClick={handleAdultContentReveal}
+              cursor="pointer"
+              transition="all 0.3s ease"
+              _hover={{
+                bg: "blackAlpha.900",
+                transform: "scale(1.02)"
+              }}
+            >
+              <VStack spacing={4} textAlign="center" color="white">
+                <Box
+                  fontSize="4xl"
+                  fontWeight="black"
+                  color="red.400"
+                  textShadow="0 0 20px rgba(255, 0, 0, 0.5)"
+                  letterSpacing="wider"
+                >
+                  +18
+                </Box>
+                <Text
+                  fontSize="lg"
+                  fontWeight="bold"
+                  color="white"
+                  textShadow="0 2px 4px rgba(0,0,0,0.8)"
+                  maxW="200px"
+                  lineHeight="1.2"
+                >
+                  Click if you have more than 18 years
+                </Text>
+                <Box
+                  w="60px"
+                  h="2px"
+                  bg="red.400"
+                  borderRadius="full"
+                  boxShadow="0 0 10px rgba(255, 0, 0, 0.5)"
+                />
+              </VStack>
+            </Box>
+          )}
+          
+          {isHovered && (!hasAdultContent || isAdultContentRevealed) && (
             <Box
               position="absolute"
               top={2}
@@ -121,7 +188,7 @@ const GameCard = ({ game }: GameCardProps) => {
             </Box>
           )}
           
-          {shouldShowControls && (
+          {shouldShowControls && (!hasAdultContent || isAdultContentRevealed) && (
             <Flex
               className="image-controls"
               position="absolute"
@@ -182,21 +249,20 @@ const GameCard = ({ game }: GameCardProps) => {
           )}
         </Box>
 
-        <CardBody p={4} display="flex" flexDirection="column" h="200px">
+        <CardBody 
+          p={4} 
+          display="flex" 
+          flexDirection="column" 
+          h="200px"
+          filter={hasAdultContent && !isAdultContentRevealed ? "blur(3px)" : "none"}
+          transition="filter 0.3s ease"
+        >
           <Flex alignItems="center" mb={3} gap={2}>
             <PlatformIcons
               platforms={
                 game.parent_platforms
                   ?.filter((p) => !!p.platform)
                   .map((p) => p.platform) || []
-              }
-            />
-            <Flex flex="1" />
-            <MetaCritic
-              score={
-                game.metacritic ||
-                game.metacritic_platforms?.[0]?.metascore ||
-                undefined
               }
             />
           </Flex>
@@ -207,7 +273,7 @@ const GameCard = ({ game }: GameCardProps) => {
               fontWeight="bold"
               lineHeight="1.3"
               noOfLines={2}
-              color="white"
+              color={gameTitleColor}
             >
               {game.name}
             </Heading>
@@ -218,19 +284,19 @@ const GameCard = ({ game }: GameCardProps) => {
             <Box bg="green.700" color="white" px={2} py={0.5} borderRadius="sm" fontWeight="bold" fontSize="xs">
               {game.rating?.toFixed(1) ?? "0.0"}
             </Box>
-            <Text color="gray.400" fontSize="xs" mx={1}>
+            <Text color={ratingTextColor} fontSize="xs" mx={1}>
               rating
             </Text>
             <Text color="blue.300" fontWeight="bold" mx={1}>+</Text>
             <Box bg="blue.700" color="white" px={2} py={0.5} borderRadius="sm" fontWeight="bold" fontSize="xs">
               {formatCount(game.ratings_count ?? game.added ?? 0)}
             </Box>
-            <Text color="gray.400" fontSize="xs" ml={1}>
+            <Text color={ratingTextColor} fontSize="xs" ml={1}>
               likes
             </Text>
           </Flex>
 
-          <Text fontSize="sm" color="gray.500" mt="auto">
+          <Text fontSize="sm" color={releaseDateColor} mt="auto">
             Released date: {game.released}
           </Text>
         </CardBody>

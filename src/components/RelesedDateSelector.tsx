@@ -3,11 +3,17 @@ import { useEffect, useState } from "react";
 import { IoCalendarNumberSharp } from "react-icons/io5";
 import { BiSolidHot } from "react-icons/bi";
 import { BsRewindFill, BsFillFastForwardFill } from "react-icons/bs";
-import useGameQueryStore from "../store"; // Import the store
+import useGameQueryStore from "../store";
+
+const getRecentToFutureDateRange = () => {
+  const pastDate = new Date();
+  pastDate.setFullYear(pastDate.getFullYear() - 1);
+  const futureDate = "2030-12-31";
+  return `${pastDate.toISOString().split("T")[0]},${futureDate}`;
+};
 
 const RelesedDateSelector = () => {
   const [date, setDate] = useState<string>("");
-
   const [name, setName] = useState<string>("");
 
   const dateSelectors = [
@@ -22,7 +28,23 @@ const RelesedDateSelector = () => {
   ];
 
   const setDateRelesed = useGameQueryStore((state) => state.setDateReleased);
-  const setGenreId = useGameQueryStore((state) => state.setGenreId);
+  const resetToDefault = useGameQueryStore((state) => state.resetToDefault);
+  const genreId = useGameQueryStore((state) => state.gameQuery.genreId);
+
+  const handleDateSelection = (selectedValue: string) => {
+    if (name === selectedValue) {
+      setDate("");
+      setName("");
+      if (genreId) {
+        setDateRelesed(getRecentToFutureDateRange());
+      } else {
+        setDateRelesed(getRecentToFutureDateRange());
+      }
+    } else {
+      setDate(selectedValue);
+      setName(selectedValue);
+    }
+  };
 
   useEffect(() => {
     if (!date) return;
@@ -89,6 +111,13 @@ const RelesedDateSelector = () => {
     setDateRelesed(dateFilter || "");
   }, [date, setDateRelesed]);
 
+  useEffect(() => {
+    if (!genreId) {
+      setDate("");
+      setName("");
+    }
+  }, [genreId]);
+
   return (
     <>
       <Button
@@ -97,7 +126,9 @@ const RelesedDateSelector = () => {
         fontWeight="extrabold"
         justifyContent="flex-start"
         onClick={() => {
-          setDate(""), setName(""), setDateRelesed(""), setGenreId(null);
+          setDate("");
+          setName("");
+          resetToDefault();
         }}
       >
         Home
@@ -112,10 +143,7 @@ const RelesedDateSelector = () => {
               <HStack>
                 <item.icon size={30} />
                 <Button
-                  onClick={() => {
-                    setDate(item.value);
-                    setName(item.value);
-                  }}
+                  onClick={() => handleDateSelection(item.value)}
                   variant={item.value === name ? "outline" : "link"}
                   ml="5px"
                   background="transparent"

@@ -5,7 +5,6 @@ export interface Game {
   name: string;
   released: string;
   background_image: string;
-  metacritic: number;
   rating: number;
   ratings_count: number;
   added: number;
@@ -20,8 +19,4 @@ export interface Game {
     platform: Platform;
   }[];
   rating_top: number;
-  metacritic_platforms?: {
-    metascore: number;
-    url: string;
-  }[];
 }

@@ -13,17 +13,30 @@ const useGames = () => {
 
   return useInfiniteQuery({
     queryKey: ["games", gameQuery],
-    queryFn: ({ pageParam = 1 }) =>
-      apiClient.getAll({
-        params: {
-          search: gameQuery.searchText,
-          parent_platforms: gameQuery.platformId,
-          ordering: gameQuery.sortOrder,
-          dates: gameQuery.dateReleased,
-          genres: gameQuery.genreId,
-          page: pageParam,
-        },
-      }),
+    queryFn: ({ pageParam = 1 }) => {
+      const params: Record<string, string | number> = {
+        page: pageParam,
+      };
+
+      if (gameQuery.searchText && gameQuery.searchText.trim() !== "") {
+        params.search = gameQuery.searchText;
+      } else {
+        if (gameQuery.platformId) {
+          params.parent_platforms = gameQuery.platformId;
+        }
+        if (gameQuery.sortOrder) {
+          params.ordering = gameQuery.sortOrder;
+        }
+        if (gameQuery.dateReleased) {
+          params.dates = gameQuery.dateReleased;
+        }
+        if (gameQuery.genreId) {
+          params.genres = gameQuery.genreId;
+        }
+      }
+
+      return apiClient.getAll({ params });
+    },
     staleTime: ms("24h"),
     getNextPageParam: (lastPage, allPages) => {
       return lastPage.next ? allPages.length + 1 : undefined;
