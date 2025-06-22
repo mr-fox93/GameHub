@@ -7,6 +7,7 @@ import PlatformSelectors from "./components/PlatformsSelector";
 import RelesedDateSelector from "./components/RelesedDateSelector";
 import GenreList from "./components/GenreList";
 import Footer from "./components/Footer";
+import GenreSelectors from "./components/GenreSelectors";
 
 function App() {
   return (
@@ -69,6 +70,9 @@ function App() {
             <Flex gap="15px" flexDirection={{ base: "column", lg: "row" }}>
               <PlatformSelectors />
               <SortSelector />
+              <Hide above="lg">
+                <GenreSelectors />
+              </Hide>
             </Flex>
           </HStack>
         </Box>

@@ -3,7 +3,13 @@ import { ChevronUpIcon } from "@chakra-ui/icons";
 
 const ScrollToTopButton = () => {
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const scrollableElement = document.getElementById("game-grid-scrollable");
+
+    if (scrollableElement) {
+      scrollableElement.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   return (
