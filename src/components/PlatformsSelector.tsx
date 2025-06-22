@@ -1,5 +1,5 @@
 import useGameQueryStore from "../store";
-import { Button, Menu, MenuButton, MenuItem, MenuList, Spinner, Text } from "@chakra-ui/react";
+import { Button, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
 import usePlatforms from "../hooks/usePlatforms";
 
@@ -17,7 +17,13 @@ const PlatformSelectors = () => {
   };
 
   if (error) return <Text color="red.500">Failed to load platforms</Text>;
-  if (isLoading) return <Spinner size="sm" />;
+  if (isLoading) {
+    return (
+      <Button isLoading size="md" variant="outline" disabled cursor="not-allowed">
+        Loading Platforms
+      </Button>
+    );
+  }
 
   const displayPlatform = isSearchActive 
     ? "All Platforms"
