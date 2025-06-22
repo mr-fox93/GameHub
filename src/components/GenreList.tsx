@@ -7,11 +7,11 @@ import {
   Text,
   Flex,
   Image,
-  Spinner,
   Box,
   useColorModeValue,
 } from "@chakra-ui/react";
 import useGameQueryStore from "../store";
+import GenreListSkeleton from "./GenreListSkeleton";
 
 const GenreList = () => {
   const [selectedGenre, setSelectedGenre] = useState<string>("");
@@ -67,7 +67,16 @@ const GenreList = () => {
       </Box>
     );
   }
-  if (isLoading) return <Spinner />;
+  if (isLoading) {
+    return (
+      <Flex flexDirection="column" padding={3}>
+        <Text fontSize="25px" fontWeight="extrabold" mb="7px" color={titleColor}>
+          Genres
+        </Text>
+        <GenreListSkeleton />
+      </Flex>
+    );
+  }
 
   return (
     <>

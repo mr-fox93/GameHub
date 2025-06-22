@@ -2,8 +2,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { Fragment } from "react";
 import useGames from "../hooks/useGames";
 import GameCard from "./GameCard";
-import { Box, SimpleGrid, useBreakpointValue } from "@chakra-ui/react";
-import { Spinner } from "@chakra-ui/react";
+import { Box, SimpleGrid, useBreakpointValue, Spinner } from "@chakra-ui/react";
 import ScrollToTopButton from "../common/ScrottToTopButton";
 
 const GameGrid = () => {
@@ -82,7 +81,7 @@ const GameGrid = () => {
           justifyContent="center"
           alignItems="center"
         >
-          <Spinner />
+          <Spinner size="xl" thickness="4px" />
         </Box>
       ) : (
         <Box
@@ -111,7 +110,7 @@ const GameGrid = () => {
             hasMore={!!hasNextPage}
             loader={
               <Box display="flex" justifyContent="center" p={4}>
-                <Spinner />
+                <Spinner size="lg" thickness="4px" />
               </Box>
             }
             scrollableTarget="game-grid-scrollable"
