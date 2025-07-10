@@ -1,16 +1,18 @@
 import { Button, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
+import { useCallback, useMemo } from "react";
 import useGameQueryStore from "../store";
 
-const SortSelector = () => {
-  const arrayOfSelectors = [
-    { value: "-added", label: "Latest & Most Trending" },
-    { value: "", label: "Relevance" },
-    { value: "name", label: "Name" },
-    { value: "released", label: "Release Date" },
-    { value: "-rating", label: "Average Rating" },
-  ];
+// Constant options defined once to avoid recreation on every render
+const SORT_OPTIONS = [
+  { value: "-added", label: "Latest & Most Trending" },
+  { value: "", label: "Relevance" },
+  { value: "name", label: "Name" },
+  { value: "released", label: "Release Date" },
+  { value: "-rating", label: "Average Rating" },
+];
 
+const SortSelector = () => {
   const setSort = useGameQueryStore((state) => state.setSortOrder);
   const setDateReleased = useGameQueryStore((state) => state.setDateReleased);
   const setPlatformId = useGameQueryStore((state) => state.setPlatformId);
@@ -24,11 +26,11 @@ const SortSelector = () => {
     return `${pastDate.toISOString().split("T")[0]},${futureDate}`;
   };
   
-  const handleSortChange = (value: string) => {
+  const handleSortChange = useCallback((value: string) => {
     if (isSearchActive) return;
-    
+
     setSort(value);
-    
+
     if (value === "-added") {
       setPlatformId("2,3,7");
       setDateReleased(getRecentToFutureDateRange());
@@ -41,11 +43,12 @@ const SortSelector = () => {
       setPlatformId(null);
       setDateReleased("");
     }
-  };
+  }, [isSearchActive, setSort, setDateReleased, setPlatformId]);
   
-  const displayLabel = isSearchActive 
-    ? "Relevance" 
-    : (arrayOfSelectors.find((item) => item.value === sort)?.label || "Latest & Most Trending");
+  const displayLabel = useMemo(() => {
+    if (isSearchActive) return "Relevance";
+    return SORT_OPTIONS.find((item) => item.value === sort)?.label || "Latest & Most Trending";
+  }, [isSearchActive, sort]);
   
   return (
     <Menu>
@@ -59,7 +62,7 @@ const SortSelector = () => {
       </MenuButton>
 
       <MenuList>
-        {arrayOfSelectors.map((selector) => (
+        {SORT_OPTIONS.map((selector) => (
           <MenuItem
             onClick={() => handleSortChange(selector.value)}
             key={selector.value}

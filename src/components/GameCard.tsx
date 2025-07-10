@@ -21,8 +21,9 @@ import { Game } from "../entities/Games";
 import noimage from "../assets/noimage.png";
 import { AiFillStar } from "react-icons/ai";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { useState, useEffect } from "react";
+import { useReducer, useEffect } from "react";
 import { useGameScreenshots } from "../hooks/useGames";
+import { useMemo } from "react";
 
 interface GameCardProps {
   game: Game;
@@ -35,9 +36,46 @@ const formatCount = (num: number) => {
 };
 
 const GameCard = ({ game }: GameCardProps) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isAdultContentRevealed, setIsAdultContentRevealed] = useState(false);
+
+  interface CardState {
+    hovered: boolean;
+    index: number;
+    adultRevealed: boolean;
+  }
+
+  const initialState: CardState = {
+    hovered: false,
+    index: 0,
+    adultRevealed: false,
+  };
+
+  type Action =
+    | { type: "hover"; value: boolean }
+    | { type: "next"; total: number }
+    | { type: "prev"; total: number }
+    | { type: "setIndex"; index: number }
+    | { type: "revealAdult" };
+
+  const reducer = (state: CardState, action: Action): CardState => {
+    switch (action.type) {
+      case "hover":
+        return { ...state, hovered: action.value };
+      case "next":
+        return { ...state, index: (state.index + 1) % action.total };
+      case "prev":
+        return { ...state, index: (state.index - 1 + action.total) % action.total };
+      case "setIndex":
+        return { ...state, index: action.index };
+      case "revealAdult":
+        return { ...state, adultRevealed: true };
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const { hovered: isHovered, index: currentImageIndex, adultRevealed: isAdultContentRevealed } = state;
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const gameTitleColor = useColorModeValue("gray.800", "white");
@@ -49,25 +87,25 @@ const GameCard = ({ game }: GameCardProps) => {
 
   const hasAdultContent = game.name.toLowerCase().includes('sex');
 
-  const allImages = [
+  const allImages = useMemo(() => [
     game.background_image || noimage,
     ...(game.background_image_additional ? [game.background_image_additional] : []),
     ...(screenshots?.results?.map(s => s.image) || [])
-  ].filter(Boolean);
+  ].filter(Boolean), [game.background_image, game.background_image_additional, screenshots?.results]);
 
   const shouldShowControls = allImages.length > 1 || (isHovered && isLoading && game.screenshots_count > 0);
 
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+    dispatch({ type: "next", total: allImages.length });
   };
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+    dispatch({ type: "prev", total: allImages.length });
   };
 
   useEffect(() => {
     if (currentImageIndex >= allImages.length) {
-      setCurrentImageIndex(0);
+      dispatch({ type: "setIndex", index: 0 });
     }
   }, [allImages.length, currentImageIndex]);
 
@@ -81,7 +119,7 @@ const GameCard = ({ game }: GameCardProps) => {
 
   const handleAdultContentReveal = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsAdultContentRevealed(true);
+    dispatch({ type: "revealAdult" });
   };
 
   return (
@@ -91,10 +129,8 @@ const GameCard = ({ game }: GameCardProps) => {
         overflow="hidden"
         h="100%"
         position="relative"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => {
-          setIsHovered(false);
-        }}
+        onMouseEnter={() => dispatch({ type: "hover", value: true })}
+        onMouseLeave={() => dispatch({ type: "hover", value: false })}
         transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
         transform={isHovered ? "translateY(-8px) scale(1.02)" : "translateY(0) scale(1)"}
         boxShadow={isHovered ? "0 20px 40px rgba(0,0,0,0.3)" : "0 4px 12px rgba(0,0,0,0.1)"}
@@ -227,7 +263,7 @@ const GameCard = ({ game }: GameCardProps) => {
                     cursor="pointer"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setCurrentImageIndex(index);
+                      dispatch({ type: "setIndex", index });
                     }}
                   />
                 ))}
@@ -355,7 +391,7 @@ const GameCard = ({ game }: GameCardProps) => {
                       bg={index === currentImageIndex ? "white" : "whiteAlpha.500"}
                       transition="all 0.2s ease"
                       cursor="pointer"
-                      onClick={() => setCurrentImageIndex(index)}
+                      onClick={() => dispatch({ type: "setIndex", index })}
                     />
                   ))}
                 </Flex>

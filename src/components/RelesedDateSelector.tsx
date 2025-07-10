@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Flex,
   Text,
@@ -18,20 +18,20 @@ const getRecentToFutureDateRange = () => {
   return `${pastDate.toISOString().split("T")[0]},${futureDate}`;
 };
 
+const DATE_SELECTORS = [
+  {
+    value: "last-30-days",
+    label: "Last 30 Days",
+    icon: IoCalendarNumberSharp,
+  },
+  { value: "this-week", label: "This Week", icon: BiSolidHot },
+  { value: "last-week", label: "Last Week", icon: BsRewindFill },
+  { value: "next-week", label: "Next Week", icon: BsFillFastForwardFill },
+];
+
 const RelesedDateSelector = () => {
   const [date, setDate] = useState<string>("");
   const [name, setName] = useState<string>("");
-
-  const dateSelectors = [
-    {
-      value: "last-30-days",
-      label: "Last 30 Days",
-      icon: IoCalendarNumberSharp,
-    },
-    { value: "this-week", label: "This Week", icon: BiSolidHot },
-    { value: "last-week", label: "Last Week", icon: BsRewindFill },
-    { value: "next-week", label: "Next Week", icon: BsFillFastForwardFill },
-  ];
 
   const setDateRelesed = useGameQueryStore((state) => state.setDateReleased);
   const genreId = useGameQueryStore((state) => state.gameQuery.genreId);
@@ -61,7 +61,7 @@ const RelesedDateSelector = () => {
     }
   }, [dateReleased]);
 
-  const handleDateSelection = (selectedValue: string) => {
+  const handleDateSelection = useCallback((selectedValue: string) => {
     if (isSearchActive) return;
     
     if (name === selectedValue) {
@@ -76,7 +76,7 @@ const RelesedDateSelector = () => {
       setDate(selectedValue);
       setName(selectedValue);
     }
-  };
+  }, [isSearchActive, name, setDateRelesed, genreId]);
 
   useEffect(() => {
     if (!date) return;
@@ -149,7 +149,7 @@ const RelesedDateSelector = () => {
         New Release
       </Text>
       <Flex direction="column" gap={2}>
-        {dateSelectors.map((selector) => (
+        {DATE_SELECTORS.map((selector) => (
           <Box
             key={selector.value}
             onClick={() => handleDateSelection(selector.value)}
