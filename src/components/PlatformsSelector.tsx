@@ -1,4 +1,5 @@
 import useGameQueryStore from "../store";
+import { useCallback, useMemo } from "react";
 import { Button, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
 import usePlatforms from "../hooks/usePlatforms";
@@ -11,10 +12,15 @@ const PlatformSelectors = () => {
   const isSearchActive = useGameQueryStore((state) => state.isSearchActive);
   const selectedPlatformId = typeof platformId === "number" ? platformId : undefined;
 
-  const handlePlatformChange = (id: number | null) => {
+  const handlePlatformChange = useCallback((id: number | null) => {
     if (isSearchActive) return;
     setPlatformId(id);
-  };
+  }, [isSearchActive, setPlatformId]);
+
+  const displayPlatform = useMemo(() => {
+    if (isSearchActive) return "All Platforms";
+    return data?.results.find((item) => item.id === selectedPlatformId)?.name || "Platform";
+  }, [isSearchActive, data, selectedPlatformId]);
 
   if (error) return <Text color="red.500">Failed to load platforms</Text>;
   if (isLoading) {
@@ -24,10 +30,6 @@ const PlatformSelectors = () => {
       </Button>
     );
   }
-
-  const displayPlatform = isSearchActive 
-    ? "All Platforms"
-    : (data?.results.find((item) => item.id === selectedPlatformId)?.name || "Platform");
 
   return (
     <Menu>

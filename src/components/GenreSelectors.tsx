@@ -1,5 +1,6 @@
 import { Button, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
+import { useCallback, useMemo } from "react";
 import useGenres from "../hooks/useGenres";
 import useGameQueryStore from "../store";
 
@@ -10,10 +11,16 @@ const GenreSelectors = () => {
   const genreId = useGameQueryStore((state) => state.gameQuery.genreId);
   const isSearchActive = useGameQueryStore((state) => state.isSearchActive);
 
-  const handleGenreChange = (slug: string | null) => {
+  const displayGenre = useMemo(() => {
+    if (isSearchActive) return "All Genres";
+    const selectedGenreName = data?.results.find((item) => item.slug === genreId)?.name;
+    return selectedGenreName || "Genre";
+  }, [isSearchActive, data, genreId]);
+
+  const handleGenreChange = useCallback((slug: string | null) => {
     if (isSearchActive) return;
     setGenreId(slug);
-  };
+  }, [isSearchActive, setGenreId]);
 
   if (error) return <Text color="red.500">Failed to load genres</Text>;
   if (isLoading)
@@ -22,9 +29,6 @@ const GenreSelectors = () => {
         Loading Genres
       </Button>
     );
-
-  const selectedGenreName = data?.results.find((item) => item.slug === genreId)?.name;
-  const displayGenre = isSearchActive ? "All Genres" : selectedGenreName || "Genre";
 
   return (
     <Menu>

@@ -5,6 +5,7 @@ import { SiNintendogamecube, SiSega, SiAtari } from "react-icons/si";
 import { DiLinux } from "react-icons/di";
 import { FaFirefoxBrowser } from "react-icons/fa";
 import { Platform } from "../entities/Platform";
+import React from "react";
 
 interface Props {
   platforms: Platform[];
@@ -48,4 +49,4 @@ const PlatformIcons = ({ platforms }: Props) => {
   );
 };
 
-export default PlatformIcons;
+export default React.memo(PlatformIcons);

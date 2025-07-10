@@ -4,6 +4,7 @@ import useGames from "../hooks/useGames";
 import GameCard from "./GameCard";
 import { Box, SimpleGrid, useBreakpointValue, Spinner } from "@chakra-ui/react";
 import ScrollToTopButton from "../common/ScrottToTopButton";
+import { useMemo } from "react";
 
 const GameGrid = () => {
   const {
@@ -21,6 +22,18 @@ const GameGrid = () => {
     lg: false,
     xl: false,
   });
+
+  const { totalGames, hasNoGames } = useMemo(() => {
+    const total = data?.pages.reduce(
+      (sum, page) => sum + (page.results?.length ?? 0),
+      0
+    ) ?? 0;
+  
+    return {
+      totalGames: total,
+      hasNoGames: !isLoading && data && total === 0,
+    };
+  }, [data, isLoading]);
 
   if (error) {
     return (
@@ -42,8 +55,8 @@ const GameGrid = () => {
     );
   }
 
-  const totalGames = data?.pages.reduce((total, page) => total + (page.results?.length ?? 0), 0) ?? 0;
-  const hasNoGames = !isLoading && data && totalGames === 0;
+
+  
 
   if (hasNoGames) {
     return (

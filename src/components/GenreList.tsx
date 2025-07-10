@@ -1,5 +1,5 @@
 import useGenres from "../hooks/useGenres";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import {
   List,
   ListItem,
@@ -38,9 +38,9 @@ const GenreList = () => {
     }
   }, [genreId, isSearchActive, data]);
 
-  const handleGenreSelection = (genreName: string, genreSlug: string) => {
+  const handleGenreSelection = useCallback((genreName: string, genreSlug: string) => {
     if (isSearchActive) return;
-    
+
     if (selectedGenre === genreName) {
       setSelectedGenre("");
       setGenreId(null);
@@ -48,12 +48,16 @@ const GenreList = () => {
       setSelectedGenre(genreName);
       setGenreId(genreSlug);
     }
-  };
+  }, [isSearchActive, selectedGenre, setGenreId]);
 
   const formatGameCount = (count: number) => {
     const formatted = count.toLocaleString('pl-PL').replace(/,/g, ' ');
     return `${formatted} GAMES`;
   };
+
+  const filteredGenres = useMemo(() => {
+    return (data?.results || []).filter((item) => item.name !== "Massively Multiplayer");
+  }, [data]);
 
   if (error) {
     return (
@@ -85,9 +89,7 @@ const GenreList = () => {
           Genres
         </Text>
         <List spacing={1}>
-          {data?.results
-            .filter((item) => item.name !== "Massively Multiplayer")
-            .map((item) => (
+          {filteredGenres.map((item) => (
               <ListItem key={item.id}>
                 <Box
                   onClick={() => handleGenreSelection(item.name, item.slug)}
